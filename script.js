@@ -97,15 +97,45 @@ function Tree(arr){
         }
     }
     
+    const levelOrder=(callback)=>{
+        const queue=[root];
+        while(queue.length!=0){
+            let currentNode=queue[0];
+            callback(currentNode);
+            if(currentNode.left) queue.push(currentNode.left);
+            if(currentNode.right) queue.push(currentNode.right);
+            queue.shift();
+        }
+    }
+
+    const inOrder=(callback,node=root)=>{
+        if(node==null) return;
+        inOrder(callback,node.left);
+        callback(node);
+        inOrder(callback,node.right);
+    }
+
+    const preOrder=(callback,node=root)=>{
+        if(node==null) return;
+        callback(node);
+        preOrder(callback,node.left);
+        preOrder(callback,node.right);
+    }
+
+    const postOrder=(callback,node=root)=>{
+        if(node==null) return;
+        postOrder(callback,node.left);
+        postOrder(callback,node.right);
+        callback(node);
+    }
+
     buildTree(arr);
-    return {root,buildTree,prettyPrint,find,insert,deleteItem};
+    return {root,buildTree,prettyPrint,find,insert,deleteItem,levelOrder,inOrder,preOrder,postOrder};
 }
 
 let tree=Tree([1,2,2,3,4,5,6,6,6,7]);
 tree.insert(25);
 console.log(tree);
 tree.prettyPrint();
-console.log(tree.find(4));
-tree.deleteItem(25);
-tree.deleteItem(6);
+tree.preOrder((value)=>console.log(value.data));
 tree.prettyPrint();
