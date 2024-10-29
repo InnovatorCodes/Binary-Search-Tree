@@ -1,32 +1,26 @@
-function node(value){
+function node(value,depthparam){
     let data=value;
+    let depth=depthparam;
     let left=null;
     let right=null;
-    return {data,left,right};
+    return {data,left,right,depth};
 }
 
 function Tree(arr){
     let root=null;
     const buildTree=(arr)=>{
-        arr.sort();
-        let prev=null;
-        for(let i=0;i<arr.length;i++){
-            if(arr[i]==prev){
-                arr.splice(i,1);
-                i--;
-            } 
-            else prev=arr[i];
-        }
-        console.log(arr);
-        root=createBST(arr,0,arr.length-1);
+        arr=[...new Set(arr.sort((a,b)=>a-b))];
+        //console.log(arr);
+        root=createBST(arr,0,arr.length-1,0);
+        //console.log(root);
     }
-    const createBST=(arr,start,end)=>{
+    const createBST=(arr,start,end,depth)=>{
         //console.log(arr,start,end);
         if(start>end) return null;
         let mid=Math.floor((start+end)/2);
-        let root=node(arr[mid]);
-        root.left=createBST(arr,start,mid-1);
-        root.right=createBST(arr,mid+1,end);
+        let root=node(arr[mid],depth);
+        root.left=createBST(arr,start,mid-1,depth+1);
+        root.right=createBST(arr,mid+1,end,depth+1);
         return root;
     }
     const prettyPrint = (node=root, prefix = "", isLeft = true) => {
@@ -50,13 +44,13 @@ function Tree(arr){
     }
 
     const insert= (value)=>{
-        root=insertNode(value,root);
+        root=insertNode(value,root,0);
     }
 
-    const insertNode=(value, treenode)=>{
-        if(treenode==null) return node(value);
-        if(value<treenode.data) treenode.left=insertNode(value,treenode.left);
-        else if(value>treenode.data) treenode.right=insertNode(value,treenode.right);
+    const insertNode=(value, treenode,depth)=>{
+        if(treenode==null) return node(value,depth);
+        if(value<treenode.data) treenode.left=insertNode(value,treenode.left,depth+1);
+        else if(value>treenode.data) treenode.right=insertNode(value,treenode.right,depth+1);
         return treenode;
     }
     
@@ -108,34 +102,69 @@ function Tree(arr){
         }
     }
 
-    const inOrder=(callback,node=root)=>{
-        if(node==null) return;
-        inOrder(callback,node.left);
-        callback(node);
-        inOrder(callback,node.right);
+    const inOrder=(callback,treenode=root)=>{
+        if(treenode==null) return;
+        inOrder(callback,treenode.left);
+        callback(treenode);
+        inOrder(callback,treenode.right);
     }
 
-    const preOrder=(callback,node=root)=>{
-        if(node==null) return;
-        callback(node);
-        preOrder(callback,node.left);
-        preOrder(callback,node.right);
+    const preOrder=(callback,treenode=root)=>{
+        if(treenode==null) return;
+        callback(treenode);
+        preOrder(callback,treenode.left);
+        preOrder(callback,treenode.right);
     }
 
-    const postOrder=(callback,node=root)=>{
-        if(node==null) return;
-        postOrder(callback,node.left);
-        postOrder(callback,node.right);
-        callback(node);
+    const postOrder=(callback,treenode=root)=>{
+        if(treenode==null) return;
+        postOrder(callback,treenode.left);
+        postOrder(callback,treenode.right);
+        callback(treenode);
+    }
+
+    const height=(treenode)=>{
+        if(treenode==null) return 0;
+        const {getMaxDepth,setMaxDepth}=maximizeDepth();
+        preOrder(setMaxDepth,treenode);
+        return getMaxDepth()-treenode.depth;
+    }
+
+    const maximizeDepth=()=>{
+        let maxdepth=0;
+        const getMaxDepth=()=>maxdepth;
+        const setMaxDepth=(treenode)=>{
+            treenode.depth>maxdepth? maxdepth=treenode.depth: maxdepth=maxdepth;
+        }
+        return {getMaxDepth,setMaxDepth};
+    }
+
+    const depth=(treenode)=>{
+        if(treenode==null) return null;
+        return treenode.depth;
+    }
+
+    const isBalanced=(treenode=root)=>{
+        let heightDiff=height(treenode.left)-height(treenode.right);
+        return (heightDiff<=1 && heightDiff>=-1);
+    }
+
+    const rebalance=()=>{
+        const allNodes=[];
+        inOrder(((treenode)=>allNodes.push(treenode.data)),root);
+        //console.log(allNodes);
+        buildTree(allNodes);
     }
 
     buildTree(arr);
-    return {root,buildTree,prettyPrint,find,insert,deleteItem,levelOrder,inOrder,preOrder,postOrder};
+    return {root,buildTree,prettyPrint,find,insert,deleteItem,levelOrder,inOrder,preOrder,postOrder,height,depth,isBalanced,rebalance};
 }
 
-let tree=Tree([1,2,2,3,4,5,6,6,6,7]);
-tree.insert(25);
-console.log(tree);
-tree.prettyPrint();
-tree.preOrder((value)=>console.log(value.data));
-tree.prettyPrint();
+function generateRandomNumbers(count){
+    let randnums=[]
+    for(let i=0;i<count;i++) randnums.push(Math.floor(Math.random()*100));
+    return randnums;
+}
+
+let arr=generateRandomNumbers(10);
+T
