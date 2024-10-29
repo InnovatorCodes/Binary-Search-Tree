@@ -160,11 +160,37 @@ function Tree(arr){
     return {root,buildTree,prettyPrint,find,insert,deleteItem,levelOrder,inOrder,preOrder,postOrder,height,depth,isBalanced,rebalance};
 }
 
-function generateRandomNumbers(count){
-    let randnums=[]
-    for(let i=0;i<count;i++) randnums.push(Math.floor(Math.random()*100));
-    return randnums;
-}
-
-let arr=generateRandomNumbers(10);
-T
+let arr=[]
+for(let i=0;i<10;i++) arr.push(Math.floor(Math.random()*100));
+let tree=Tree(arr);
+console.log(tree.isBalanced());
+let allElements=[];
+tree.levelOrder((treenode)=>allElements.push(treenode.data));
+console.log(allElements);
+allElements=[];
+tree.preOrder((treenode)=>allElements.push(treenode.data));
+console.log(allElements);
+allElements=[];
+tree.inOrder((treenode)=>allElements.push(treenode.data));
+console.log(allElements);
+allElements=[];
+tree.postOrder((treenode)=>allElements.push(treenode.data));
+console.log(allElements);
+for(let i=0;i<5;i++) tree.insert(Math.floor(Math.random()*100+100));
+tree.prettyPrint();
+console.log(tree.isBalanced());
+tree.rebalance();
+console.log(tree.isBalanced());
+tree.prettyPrint();
+allElements=[];
+tree.levelOrder((treenode)=>allElements.push(treenode.data));
+console.log(allElements);
+allElements=[];
+tree.preOrder((treenode)=>allElements.push(treenode.data));
+console.log(allElements);
+allElements=[];
+tree.inOrder((treenode)=>allElements.push(treenode.data));
+console.log(allElements);
+allElements=[];
+tree.postOrder((treenode)=>allElements.push(treenode.data));
+console.log(allElements);
